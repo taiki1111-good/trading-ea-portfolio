@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "shd101wyy.markdown-preview-enhanced",
+        "yzhang.markdown-all-in-one",
+        "bierner.markdown-mermaid",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "Gruntfuggly.todo-tree",
+        "ms-python.python",
+        "ryanluker.vscode-coverage-gutters",
+        "redhat.vscode-yaml",
+        "ms-toolsai.jupyter",
+        "hediet.vscode-drawio"
+    ]
+}

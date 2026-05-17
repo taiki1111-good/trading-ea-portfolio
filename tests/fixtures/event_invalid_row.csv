@@ -1,0 +1,3 @@
+event_time,event_type
+2024-01-01T01:00:00Z,cpi
+invalid-timestamp,nfp
