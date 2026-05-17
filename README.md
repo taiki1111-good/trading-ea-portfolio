@@ -14,8 +14,6 @@
 - 概要: `README.md`
 - 外部説明: `docs/portfolio/portfolio_overview.md`
 - アーキテクチャ: `docs/portfolio/architecture_for_portfolio.md`
-- 面接向け説明: `docs/portfolio/interview_pitch.md`
-- 面接説明: `docs/portfolio/interview_pitch.md`
 - 公開時の注意: `docs/portfolio/disclosure_policy.md`
 - 公開前チェック: `docs/portfolio/public_review_checklist.md`
 - 見せ方計画: `docs/portfolio/showcase_assets_plan.md`
@@ -83,7 +81,6 @@ Data
 ## Portfolio Docs
 - [portfolio_overview.md](docs/portfolio/portfolio_overview.md)
 - [architecture_for_portfolio.md](docs/portfolio/architecture_for_portfolio.md)
-- [interview_pitch.md](docs/portfolio/interview_pitch.md)
 - [disclosure_policy.md](docs/portfolio/disclosure_policy.md)
 - [public_review_checklist.md](docs/portfolio/public_review_checklist.md)
 - [showcase_assets_plan.md](docs/portfolio/showcase_assets_plan.md)
