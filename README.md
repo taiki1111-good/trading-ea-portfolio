@@ -15,6 +15,7 @@
 - 外部説明: `docs/portfolio/portfolio_overview.md`
 - アーキテクチャ: `docs/portfolio/architecture_for_portfolio.md`
 - 面接向け説明: `docs/portfolio/interview_pitch.md`
+- 面接説明: `docs/portfolio/interview_pitch.md`
 - 公開時の注意: `docs/portfolio/disclosure_policy.md`
 - 公開前チェック: `docs/portfolio/public_review_checklist.md`
 - 見せ方計画: `docs/portfolio/showcase_assets_plan.md`
