@@ -1,111 +1,75 @@
 # Interview Pitch
 
-本書は外部説明用の要約であり、Source of Truth ではない。正式な現状・契約・実装境界は `ops/CURRENT_TASKS.md`、`docs/03_architecture.md`、`docs/04_module_spec.md`、`docs/05_variable_spec.md`、`docs/10_interface_contract.md`、`docs/17_backtest_design.md` を優先する。
+本書は、`trading-ea` を面接・ポートフォリオ説明で話すための補助資料です。
+
+本書は外部説明用の要約であり、正式な現状・契約・実装境界は `README.md`、`docs/portfolio/portfolio_overview.md`、`docs/portfolio/architecture_for_portfolio.md`、および詳細設計文書を優先します。
 
 ## 1. 30秒説明
+
 このリポジトリは、設計・検証・説明可能性を重視した研究/検証用EAフレームワークです。
 
-売買ロジック単体ではなく、Data から Evaluator までの責務分離、future leak 防止、判断理由ログ、dry-run（実注文を行わない検証実行）を中心に設計しています。現時点では、実際の取引システムとの接続や注文送信機能は実装していません。
+売買ロジック単体ではなく、データ処理、売買判断、リスク制御、実行、ログ記録、評価を分け、判断理由や状態遷移を後から確認できる構成にしています。現時点では、実際の取引システムとの接続や注文送信機能は実装していません。
 
 ## 2. 1分説明
+
 このプロジェクトでは、自動売買EAを一つの大きな条件式として作るのではなく、`Data -> HTFContext -> LTFStructure -> Signal -> RiskFilter -> Execution -> Logger -> Evaluator` の一方向フローへ分解しています。
 
-BacktestRunner / PipelineAdapter / CSV replay dry-run を使い、時系列上の構造検証、ログ整合、no-real-order integrity（実注文が発生していないことの整合確認）を確認します。HTF diagnostic comparison（採用前の診断比較）や lot sizing shadow comparison（本体挙動に影響させない比較）も、本体採用前に影響範囲を切り分けるための仕組みとして整理しています。
+実注文を行わない検証実行（dry-run）を使い、ログの整合性、状態遷移、実注文が発生していないことを確認します。また、上位足条件やロット計算についても、本体処理に組み込む前に診断・比較することで、影響範囲を切り分ける方針を取っています。
 
-このため、面接では「収益性」よりも、責務分離、検証設計、ログ追跡、未実装範囲を分けて説明できる点を中心に話します。
-
-## 3. 強調する技術要素
-- モジュール責務と I/O 契約を先に整理していること
-- 現在バーまでの情報だけを使い、future leak を避ける設計にしていること
-- `decision_logs` / `trade_logs` / `state_logs` / `event_logs` を分け、判断理由と状態遷移を追えること
-- main と experiments を分け、新しい仮説を本体へ直接混ぜないこと
-- dry-run、diagnostic comparison、shadow comparison を使い、実装済み・検証済み・未実装を分けて確認していること
-
-## 4. 明確に伝える未実装範囲
-- 実際の取引システムとの接続
-- 注文送信機能
-- 収益性の確認
-- lot sizing 本体接続
-- Session / SR / HTF の本体filter化
-- 株式対応の実装・検証
-
-## 5. 面接での短い回答例
-「このプロジェクトは、運用向けの完成EAではなく、EAを安全に検証するための研究用フレームワークです。Data、Signal、RiskFilter、Execution、Logger、Evaluator を分け、判断理由と状態遷移をログで追えるようにしています。CSV replay dry-run では注文送信を行わず、ログ整合と no-real-order integrity を確認します。HTF や lot sizing は本体採用前の診断比較として扱い、収益性や運用準備完了は主張していません。」
-本書は、`trading-ea` を面接・ポートフォリオ説明で話すための補助資料である。
-
-本書は外部説明用の要約であり、Source of Truth ではない。正式な現状・契約・実装境界は `ops/CURRENT_TASKS.md`、`docs/03_architecture.md`、`docs/04_module_spec.md`、`docs/05_variable_spec.md`、`docs/10_interface_contract.md`、`docs/17_backtest_design.md` を優先する。
-
-## 1. 30秒説明
-
-このプロジェクトは、実運用EAや収益性確認済みシステムではなく、研究・検証用の自動売買EAフレームワークです。
-
-売買ロジック単体ではなく、`Data -> HTFContext -> LTFStructure -> Signal -> RiskFilter -> Execution -> Logger -> Evaluator` という一方向フローに分け、判断理由や状態遷移をログから追跡できるように設計しています。実注文前に、dry-run、diagnostic comparison、shadow comparison を通じて、構造検証・ログ整合・no-real-order integrity を確認することを重視しています。
-
-## 2. 1分説明
-
-`trading-ea` は、研究・検証用の自動売買EAフレームワークです。目的は「儲かるEA」として見せることではなく、売買判断、リスク制御、実行、ログ、評価を責務ごとに分離し、判断過程を後から検証できる基盤を作ることです。
-
-中心となる設計は、`Data -> HTFContext -> LTFStructure -> Signal -> RiskFilter -> Execution -> Logger -> Evaluator` の一方向フローです。BacktestRunner / PipelineAdapter を通じて時系列順に処理し、future leak を避けながら、dry-run とログ整合を確認します。
-
-現時点では、Phase 9 CSV replay pipeline dry-run、Risk/Stop v0、PipelineAdapter planner chain 正式接続、HTF diagnostic comparison v0、Lot Sizing shadow comparison まで整理しています。ただし、実 broker / OANDA API / 実注文送信、収益性確認、lot sizing 本体接続、Session/SR/HTF の本体filter化は未実装です。
+そのため、面接では「収益性」よりも、責務分離、検証設計、ログ追跡、実装済み範囲と未実装範囲を分けて説明できる点を中心に話します。
 
 ## 3. 3分説明
 
 このプロジェクトでは、自動売買EAを単なる売買条件の集合としてではなく、検証可能なシステムとして設計しました。
 
-まず、Data、HTFContext、LTFStructure、Signal、RiskFilter、Execution、Logger、Evaluator に責務を分けています。これにより、どの段階で何を判断したのか、どの理由で entry 候補になったのか、RiskFilter で何が通過・停止したのか、状態遷移やイベントがどのように起きたのかを、ログから追跡できるようにしています。
+まず、データ処理、相場構造の判断、売買シグナル、リスク制御、実行、ログ記録、評価を分けています。これにより、どの段階で何を判断したのか、どの理由で entry 候補になったのか、リスク制御で何が通過・停止したのか、状態遷移やイベントがどのように起きたのかを、ログから追跡できるようにしています。
 
-次に、BacktestRunner / PipelineAdapter を通じて、過去データを時系列順に流し、各時点で参照可能な情報だけを使う設計にしています。future leak を避けるため、現在バーより未来の情報を使わないことを docs と実装の両方で重視しています。
+次に、過去データを時系列順に流し、各時点で参照可能な情報だけを使う設計にしています。これは、未来の情報を使ってしまう検証上の誤りを避けるためです。
 
-また、実注文や broker 接続へ進む前に、CSV replay pipeline dry-run によってログ整合、health 判定、no-real-order integrity を確認する方針を取っています。HTF は diagnostic comparison v0 として OFF / permissive / strict を比較し、本体filter採用前の診断に留めています。Lot Sizing も本体接続ではなく、fixed baseline と risk-based lot の違いを見る shadow comparison tool として扱っています。
+また、実際の取引システムへ接続する前段階として、注文送信を行わない検証実行でログ整合や状態遷移を確認しています。上位足条件やロット計算も、いきなり本体処理に組み込むのではなく、まず診断・比較の対象として扱っています。
 
-このため、現時点の成果は収益性確認や実運用可能性ではなく、設計、責務分離、ログ追跡、検証手順、未実装範囲の明確化にあります。実 broker / OANDA API / 実注文送信、収益性確認、lot sizing 本体接続、Session/SR/HTF の本体filter化は未実装です。
+このため、現時点の成果は収益性確認や実運用準備完了ではなく、設計、責務分離、ログ追跡、検証手順、未実装範囲の明確化にあります。
 
 ## 4. 強調するポイント
 
-- 売買ロジック単体ではなく、検証可能なフレームワークとして設計した。
-- モジュール責務と I/O 契約を先に整理してから実装した。
-- future leak を避ける時系列処理を重視した。
-- dry-run と no-real-order integrity により、実注文前の構造検証を行った。
-- decision / trade / state / event のログを分け、判断理由を追跡できるようにした。
-- HTF や lot sizing は本体採用前に diagnostic / shadow comparison として比較した。
-- 実装済み、未実装、future optional を分けて説明できるようにした。
+- 売買ロジック単体ではなく、検証可能なフレームワークとして設計したこと
+- モジュール責務と入出力の契約を先に整理してから実装したこと
+- 時系列上、未来の情報を使わない検証設計を意識したこと
+- 注文送信を行わない検証実行により、ログ整合と状態遷移を確認したこと
+- 判断理由、取引候補、状態遷移、イベントをログとして分け、後から追跡できるようにしたこと
+- 新しい条件やロット計算を、本体処理へすぐ混ぜず、まず診断・比較として扱ったこと
+- 実装済み、検証済み、未実装の範囲を分けて説明できるようにしたこと
 
-## 5. 避ける説明
+## 5. 明確に伝える未実装範囲
 
-以下のような表現は使わない。
-
-- 収益性確認済み
-- 実運用可能
-- 実注文対応済み
-- broker接続済み
-- OANDA API接続済み
-- risk-based lot 本体接続済み
-- HTF filter採用済み
-- 完成済みEA
-- 本番運用EA
+- 実際の取引システムとの接続
+- 注文送信機能
+- 収益性の確認
+- risk-based lot の本体接続
+- Session / SR / HTF の本体filter化
+- 株式対応の実装・検証
 
 ## 6. よくある質問への答え方
 
 ### Q. 実際に利益は出ていますか？
 
-このプロジェクトでは、収益性確認を主目的にはしていません。現時点では、売買判断・リスク制御・ログ・評価を分け、dry-run や diagnostic comparison によって構造検証を行う段階です。PnL や勝率を成果として主張する段階ではありません。
+このプロジェクトでは、収益性確認を主目的にはしていません。現時点では、売買判断・リスク制御・ログ・評価を分け、注文送信を行わない検証実行や診断比較によって構造を確認する段階です。損益や勝率を成果として主張する段階ではありません。
 
 ### Q. 実運用できますか？
 
-できません。実 broker 接続、OANDA API 接続、実注文送信、実運用監視、通知、復旧フローは未実装です。現時点では研究・検証用EAフレームワークです。
+できません。現時点では、実際の取引システムとの接続、注文送信、運用監視、通知、復旧フローは実装していません。研究・検証用のフレームワークとして扱っています。
 
 ### Q. 何が一番の成果ですか？
 
-売買ロジックそのものよりも、システムを責務分離し、時系列処理、ログ追跡、dry-run、diagnostic comparison、shadow comparison を通じて、判断過程を後から説明できる形にした点です。
+売買ロジックそのものよりも、システムを責務分離し、時系列処理、ログ追跡、注文送信を行わない検証実行、診断比較を通じて、判断過程を後から説明できる形にした点です。
 
-### Q. なぜ画像やグラフで収益を見せないのですか？
+### Q. なぜ損益や勝率を中心に見せないのですか？
 
-誤解を避けるためです。現時点では収益性確認済みではないため、PnL、win_rate、total_pnl を外部説明の中心にはしていません。代わりに、検証フロー、アーキテクチャ、ログ設計、未実装範囲を明示しています。
+現時点では収益性を確認した段階ではないためです。外部説明では、検証フロー、アーキテクチャ、ログ設計、未実装範囲を中心に示しています。
 
 ## 7. 参照導線
 
-外部説明では、以下を主導線とする。
+外部説明では、以下を主導線とします。
 
 1. `README.md`
 2. `docs/portfolio/portfolio_overview.md`
@@ -114,4 +78,4 @@ BacktestRunner / PipelineAdapter / CSV replay dry-run を使い、時系列上�
 5. `docs/portfolio/disclosure_policy.md`
 6. `docs/portfolio/public_review_checklist.md`
 
-`ops/worklog/` は詳細な作業履歴・設計判断履歴であり、最初の説明導線としては扱わない。
+`ops/worklog/` は詳細な作業履歴・設計判断履歴であり、最初の説明導線としては扱いません。
