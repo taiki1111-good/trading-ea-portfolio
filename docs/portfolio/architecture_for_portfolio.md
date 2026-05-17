@@ -33,11 +33,11 @@ BacktestRunner は、過去データを時系列順に流し、主要モジュ�
 
 PipelineAdapter は、BacktestRunner から主要モジュールを呼び出すための接続層として扱う。現時点では `PositionSizer` / `StopLossPlanner` / `TakeProfitPlanner` / `RiskAssembler` の planner chain へ正式接続済みである。ただし目的は fixed baseline 同値維持であり、機能拡張や収益性評価ではない。`PositionSizer` は placeholder を維持する。
 
-CSV replay dry-run は、near-live 風に CSV を流し、ログ整合、health 判定、no real order integrity を確認するための検証経路である。`dry_run_health_status=pass` は dry-run の整合確認であり、収益性や実運用品質を意味しない。
+CSV replay dry-run は、near-live 風に CSV を流し、ログ整合、health 判定、no-real-order integrity（実注文が発生していないことの整合確認）を確認するための検証経路である。dry-run は実注文を行わない検証実行であり、`dry_run_health_status=pass` はログ整合の確認結果を示す。収益性や実運用品質を意味しない。
 
 補足:
-- HTF は diagnostic comparison v0（OFF/permissive/strict 比較）までを完了しており、本体filter採用ではない。
-- lot sizing は shadow comparison tool（comparison-only）として採用しており、本体接続ではない。
+- HTF は diagnostic comparison v0（採用前に条件差分を診断する比較）までを完了しており、本体filter採用ではない。
+- lot sizing は shadow comparison tool（本体挙動へ影響させずに候補値を比較する仕組み）として採用しており、本体接続ではない。
 
 ## 4. Logger / Persistence / Evaluator
 ログは、後から判断理由と状態を追跡できるように分けて扱う。
@@ -74,7 +74,7 @@ timestamp            event_type       event_reason
 - 上記は抽象例であり、実データ・実績値ではない。
 - `PnL` / `win_rate` / `total_pnl` などの成績数値はここでは扱わない。
 - 収益性確認や実運用品質を意味しない。
-- 実 broker / OANDA API / 実注文送信とは無関係である。
+- 実際の取引システムとの接続や注文送信機能とは無関係である。
 
 ## 5. Main と Experiments の分離
 初期 main は `third_wave_break` を中心に扱う。
@@ -96,10 +96,9 @@ current step i:
 現時点の Execution は dry-run / backtest 用の skeleton を中心に扱う。
 
 以下は未実装である。
-- 実 broker 接続
-- OANDA API 接続
-- 実注文送信
-- broker 約定応答の本格処理
+- 実際の取引システムとの接続
+- 注文送信機能
+- 約定応答の本格処理
 - 実運用監視・通知・復旧
 
 外部説明では、dry-run と実運用を明確に区別する。

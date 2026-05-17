@@ -6,16 +6,16 @@
 
 ## 1. 見せ方の基本方針
 
-このプロジェクトは、収益性確認済みEAや実運用EAとして見せない。
+このプロジェクトは、設計・検証・説明可能性を重視した研究/検証用EAフレームワークとして見せる。実際の取引システムとの接続や注文送信機能は実装していない。
 
 外部説明では、以下を中心に見せる。
 
 - モジュール分割と責務分離
 - 時系列処理と future leak 防止
-- dry-run によるログ整合確認
-- no-real-order integrity の確認
-- diagnostic comparison による採用前の比較設計
-- shadow comparison による本体接続前の安全な比較
+- dry-run（実注文を行わない検証実行）によるログ整合確認
+- no-real-order integrity（実注文が発生していないことの整合確認）
+- diagnostic comparison（採用前の診断比較）による比較設計
+- shadow comparison（本体挙動に影響させない比較）による本体接続前の比較
 - 判断理由と状態遷移を追跡できるログ設計
 
 ## 2. 推奨するスクリーンショット / 図解候補
@@ -31,7 +31,7 @@
 - `簡易フロー`
 
 安全なキャプション例:
-> 実運用EAではなく、責務分離・ログ設計・dry-run を通じて判断過程を説明可能にする研究・検証用EAフレームワークとして整理している。
+> 責務分離・ログ設計・dry-run を通じて判断過程を説明可能にする研究・検証用EAフレームワークとして整理している。
 
 ### 2.2 アーキテクチャ図
 
@@ -54,7 +54,7 @@
 - `docs/portfolio/portfolio_overview.md` の `検証フロー`
 
 安全なキャプション例:
-> 実注文前に、BacktestRunner / PipelineAdapter / CSV replay dry-run を使って、構造検証、ログ整合、no-real-order integrity を確認する。
+> BacktestRunner / PipelineAdapter / CSV replay dry-run を使って、構造検証、ログ整合、no-real-order integrity を確認する。
 
 注意:
 - `dry_run_health_status=pass` を収益性や実運用品質として説明しない。
@@ -77,14 +77,14 @@
 ### 2.5 Disclosure Policy / Public Review Checklist
 
 目的:
-- 過大表現を避け、実装済み・未実装・非スコープを明確にしていることを示す。
+- 実装済み・検証済み・未実装を分けて説明していることを示す。
 
 見せる箇所:
 - `docs/portfolio/disclosure_policy.md`
 - `docs/portfolio/public_review_checklist.md`
 
 安全なキャプション例:
-> 公開時に、収益性確認済み・実運用可能・実注文対応済みと誤解されないよう、禁止表現と未実装事項を明示している。
+> 公開時に、到達点と未実装範囲を分けて説明できるように整理している。
 
 ## 3. 撮影対象チェックリスト
 
@@ -95,10 +95,10 @@
 - [ ] `このプロジェクトで示すこと` が見える範囲を撮る。
 - [ ] `まず見るべき文書` が見える範囲を撮る。
 - [ ] `簡易フロー` が見える範囲を撮る。
-- [ ] キャプションでは、研究・検証用EAフレームワークであり、実運用EAではないことを明記する。
+- [ ] キャプションでは、研究・検証用EAフレームワークであり、実際の取引システムとは接続していないことを明記する。
 
 避けること:
-- [ ] 実運用可能性や収益性を示す画面として扱わない。
+- [ ] 運用準備完了や収益性を示す画面として扱わない。
 - [ ] `ops/worklog/` を最初の説明導線として見せない。
 
 ### 3.2 優先2: 検証フロー
@@ -121,16 +121,16 @@
 
 避けること:
 - [ ] PnL、win_rate、total_pnl を見せない。
-- [ ] 実注文ログや broker 接続ログのように見せない。
+- [ ] 注文送信ログや取引システム接続ログのように見せない。
 
 ### 3.4 優先4: Disclosure Policy / Public Review Checklist
 
-- [ ] `docs/portfolio/disclosure_policy.md` の禁止表現・推奨表現を撮る。
+- [ ] `docs/portfolio/disclosure_policy.md` の表現方針・推奨表現を撮る。
 - [ ] `docs/portfolio/public_review_checklist.md` の未実装事項チェックを撮る。
-- [ ] キャプションでは、過大表現を避けるための公開方針であることを説明する。
+- [ ] キャプションでは、到達点と未実装範囲を分ける公開方針であることを説明する。
 
 避けること:
-- [ ] 禁止表現のリストを、実装済み項目の一覧のように見せない。
+- [ ] 注意表現のリストを、実装済み項目の一覧のように見せない。
 
 ## 4. 画像保存・命名ルール
 
@@ -155,7 +155,7 @@ docs/portfolio/assets/
 - 画像だけで実装済み・未実装を判断できるようにしようとせず、必ず本文へのリンクやキャプションと併用する。
 - ローカルパス、個人情報、実データ、API key / token / secret が映り込まないようにする。
 - PnL、win_rate、total_pnl などの成績数値を中心にした画像は現時点では作らない。
-- 実 broker / OANDA / 実注文画面のように見える画像は扱わない。
+- 注文送信画面や取引システム接続画面のように見える画像は扱わない。
 
 README や portfolio docs に画像を貼る場合は、以下のような相対パスを使う。
 
@@ -175,12 +175,12 @@ README や portfolio docs に画像を貼る場合は、以下のような相対
 ### Validation flow
 ![Validation flow](assets/02_validation_flow.png)
 
-実注文前に、BacktestRunner / PipelineAdapter / CSV replay dry-runを使って、構造検証・ログ整合・no-real-order integrityを確認する検証フロー。
+BacktestRunner / PipelineAdapter / CSV replay dry-runを使って、構造検証・ログ整合・no-real-order integrityを確認する検証フロー。
 
 補足:
 - これらの画像は補助資料であり、本文の説明と併用して扱う。
 - PnL、win_rate、total_pnl などの成績数値を示すものではない。
-- 実 broker / OANDA API / 実注文送信を示すものではない。
+- 実際の取引システムとの接続や注文送信機能を示すものではない。
 
 ## 6. 現時点では避けるもの
 
@@ -190,8 +190,8 @@ README や portfolio docs に画像を貼る場合は、以下のような相対
 - win_rate / total_pnl / average_pnl などの成績数値
 - 実データの詳細な期間・条件に依存する比較結果
 - worklog 内の個別 run 結果
-- broker / OANDA / 実注文に見える画面
-- 実運用可能性を示すような表現
+- 取引システム接続や注文送信に見える画面
+- 運用準備完了を示すような表現
 
 ## 7. 推奨する公開順
 
@@ -200,8 +200,9 @@ README や portfolio docs に画像を貼る場合は、以下のような相対
 1. README 冒頭
 2. `docs/portfolio/portfolio_overview.md`
 3. `docs/portfolio/architecture_for_portfolio.md`
-4. `docs/portfolio/disclosure_policy.md`
-5. `docs/portfolio/public_review_checklist.md`
+4. `docs/portfolio/interview_pitch.md`
+5. `docs/portfolio/disclosure_policy.md`
+6. `docs/portfolio/public_review_checklist.md`
 
 必要に応じて、詳細設計として `docs/09_presentation_notes.md`、`docs/10_interface_contract.md`、`docs/17_backtest_design.md` を参照する。
 
